@@ -16,7 +16,7 @@ db.once("open", () => {
     console.log("Established connection to database")
 });
 
-const sample = (array) => array[Math.random() * array.length];
+const sample = array => array[Math.floor(Math.random() * array.length)];
 
 const seedDB = async () => {
     await Campground.deleteMany({});
