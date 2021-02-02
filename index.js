@@ -98,10 +98,6 @@ app.get("/", (req, res) => {
     console.log("Hello from YelpCamp!");
 })
 
-
-
-
-
 app.all("*", (req, res, next) => {
     next(new ExpressError("Page Not Found", 404));
 })
