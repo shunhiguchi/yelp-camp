@@ -6,14 +6,18 @@ const path = require("path");
 const ejs = require("ejs");
 const ejsMate = require("ejs-mate");
 const methodOverride = require("method-override");
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
 
 const Campground = require("./models/campground.js");
 const ExpressError = require("./utils/ExpressError.js");
 const {campgroundSchema, reviewSchema} = require("./schemas.js")
 const Review = require("./models/review.js");
+const User = require("./models/users.js");
 
-const campgrounds = require("./routes/campgrounds.js");
-const reviews = require("./routes/reviews.js");
+const campgroundRoutes = require("./routes/campgrounds.js");
+const reviewRoutes = require("./routes/reviews.js");
+const userRoutes = require("./routes/users.js");
 
 const app = express();
 
@@ -67,8 +71,16 @@ const sessionConfig = {
         maxAge: 1000 * 60 * 60 * 24 * 7
     }
 }
+
 app.use(session(sessionConfig));
 app.use(flash());
+
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 app.use((req, res, next) => {
     res.locals.success = req.flash("success");
@@ -76,8 +88,10 @@ app.use((req, res, next) => {
     next();
 })
 
-app.use("/campgrounds", campgrounds);
-app.use("/campgrounds/:id/reviews", reviews);
+app.use("/campgrounds", campgroundRoutes);
+app.use("/campgrounds/:id/reviews", reviewRoutes);
+app.use("/", userRoutes);
+
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/", (req, res) => {
