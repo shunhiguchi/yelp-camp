@@ -32,7 +32,9 @@ router.get("/login", (req, res) => {
 router.post("/login", passport.authenticate("local", {failureFlash: true, failureRedirect: "/login"}), (req, res) => {
     req.flash("success", "Welcome back!");
     const redirectUrl = req.session.returnTo || "/campgrounds";
-    delete req.ression.returnTo;
+    if (req.session.returnTo){
+        delete req.ression.returnTo;
+    }
     res.redirect(redirectUrl);
 })
 
