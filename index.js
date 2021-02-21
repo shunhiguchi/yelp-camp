@@ -100,7 +100,7 @@ app.use("/", userRoutes);
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/", (req, res) => {
-    console.log("Hello from YelpCamp!");
+    res.render("home.ejs");
 })
 
 app.all("*", (req, res, next) => {
