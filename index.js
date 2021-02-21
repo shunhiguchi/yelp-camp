@@ -68,6 +68,7 @@ const validateReview = (req, res, next) => {
 }
 
 const sessionConfig = {
+    name: "session",
     secret: "thishouldbeabettersecret",
     resave: false,
     saveUninitialized: true,
