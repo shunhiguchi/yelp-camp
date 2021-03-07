@@ -14,6 +14,7 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const mongoSanitize = require("express-mongo-sanitize");
 const helmet = require("helmet");
+const dbUrl = process.env.DB_URL;
 
 const Campground = require("./models/campground.js");
 const ExpressError = require("./utils/ExpressError.js");
@@ -80,7 +81,9 @@ app.use(
 app.use(express.urlencoded({extended: true}));
 app.use(methodOverride("_method"));
 
-mongoose.connect("mongodb://localhost:27017/yelp-camp", {
+// dbUrl
+// "mongodb://localhost:27017/yelp-camp
+mongoose.connect(dbUrl, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true,
