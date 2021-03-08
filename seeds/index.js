@@ -1,10 +1,16 @@
+if (process.env.NODE_ENV !== "production") {
+    require("dotenv").config();
+}
+
 const mongoose = require("mongoose");
 
 const Campground = require("../models/campground.js");
 const cities = require("./cities.js");
-const {places, descriptors} = require("./seedHelpers.js");
+const {places, descriptors, photos, authors} = require("./seedHelpers.js");
 
-mongoose.connect("mongodb://localhost:27017/yelp-camp", {
+const dbUrl = process.env.DB_URL || "mongodb://localhost:27017/yelp-camp";
+
+mongoose.connect(dbUrl, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true
@@ -24,9 +30,30 @@ const seedDB = async () => {
     {
         const n = Math.floor(Math.random() * 1000);
         const price = Math.floor(Math.random() * 20) + 10;
+        const nAuthor = Math.floor(Math.random() * 5);
+        const numImages = Math.floor(Math.random() * 3) + 1;
+        
+        let options = [];
+        for (let j = 0; j < photos.length; j++) {
+            options.push(j);
+        }
+
+        let images = []
+        for (let k = 0; k < numImages; k++) {
+            nImage = Math.floor(Math.random() * photos.length);
+            options.splice(options.indexOf(nImage), 1);
+            const url = photos[nImage];
+            const filename = `YelpCamp${url.split("YelpCamp")[1].split(".jpg")[0]}`;
+            console.log(filename);
+            images.push({
+                "url": url,
+                "filename": filename
+            })
+        }
+
         const camp = new Campground( 
         {
-            author: "601a21e8b9412810d3aa750c",
+            author: authors[nAuthor],
             location: `${cities[n].city}, ${cities[n].state}`,
             geometry: { 
                 "type" : "Point", 
@@ -37,21 +64,13 @@ const seedDB = async () => {
             },
             title: `${sample(descriptors)} ${sample(places)}`,
             description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi vel laborum expedita accusantium sapiente quidem cumque, tempora error pariatur repellat ipsum, veniam totam molestiae! Et corporis exercitationem earum facilis deleniti.",
-            price: price,
-            images:  [
-                {
-                    "url" : "https://res.cloudinary.com/dgclala73/image/upload/v1613416068/YelpCamp/zikmpyymkngo8nr48gpl.jpg", 
-                    "filename" : "YelpCamp/zikmpyymkngo8nr48gpl" 
-                }, 
-                {
-                    "url" : "https://res.cloudinary.com/dgclala73/image/upload/v1613416072/YelpCamp/szem1x7b4dqi8wo1hdpu.jpg", 
-                    "filename" : "YelpCamp/szem1x7b4dqi8wo1hdpu" 
-                }
-            ]
+            price,
+            images
         })
         await camp.save();
     }
 }
+
 
 seedDB().then(() => {
     mongoose.connection.close();
