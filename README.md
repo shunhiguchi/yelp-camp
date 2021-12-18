@@ -10,6 +10,12 @@ Get started: [YelpCamp](https://fierce-anchorage-72285.herokuapp.com/).
 - Users can leave reviews on campgrounds.
 - Users can find campgrounds via an interactive map.
 
+## Technologies
+
+- Node.js
+- Express.js
+- MongoDB
+
 ## Gallery
 
 ![Screenshot of home page](img/screenshot-home.png)
